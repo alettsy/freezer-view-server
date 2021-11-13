@@ -1,5 +1,5 @@
-module.exports = function (db) {
-    function getAll(res, name) {
+module.exports = {
+    getAll: (db, res, name) => {
         db.all(`SELECT * FROM ${name};`, [], (err, rows) => {
             if (err) {
                 res.status(500).send({ error: err.message });
@@ -7,9 +7,9 @@ module.exports = function (db) {
                 res.status(200).send(rows);
             }
         });
-    }
+    },
 
-    function add(res, sql, params) {
+    add: (db, res, sql, params) => {
         db.run(sql, params, (err) => {
             if (err === null) {
                 res.status(200).send({
@@ -19,17 +19,17 @@ module.exports = function (db) {
                 res.status(500).send({ error: err.message });
             }
         });
-    }
+    },
 
-    function removeCheck(res, err) {
+    removeCheck: (db, res, err) => {
         if (err === null) {
             res.status(200).send({ message: "success" });
         } else {
             res.status(500).send({ error: err.message });
         }
-    }
+    },
 
-    async function checkExists(res, table, id) {
+    checkExists: async (db, res, table, id) => {
         return new Promise(resolve => {
             db.get(`SELECT COUNT(*) FROM ${table} WHERE id = ${id}`, (err, row) => {
                 if (err) {
@@ -44,4 +44,4 @@ module.exports = function (db) {
             });
         });
     }
-}
+};
