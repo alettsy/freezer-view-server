@@ -23,9 +23,9 @@ module.exports = function (app, db) {
         const params = [body.name, body.defaultDate];
 
         if (result.error) {
-            res.status(500).send(result.error);
+            res.status(400).send(result.error);
         } else {
-            dbFuncs.add(db, sql, params).then(result => {
+            dbFuncs.run(db, sql, params).then(result => {
                 if (result.error) {
                     res.status(500).send(result);
                 } else {
@@ -46,7 +46,11 @@ module.exports = function (app, db) {
             res.status(400).send({ "error": result.error });
         } else {
             dbFuncs.checkExists(db, 'categories', id).then(result => {
-                if (!result.error) {
+                if (result.error) {
+                    res.status(500).send(result);
+                } else if (result.exists === false) {
+                    res.status(400).send(result);
+                } else {
                     db.run(sql, params, (err) => {
                         dbFuncs.removeCheck(err).then(result => {
                             if (result.error) {
@@ -56,8 +60,6 @@ module.exports = function (app, db) {
                             }
                         });
                     });
-                } else {
-                    res.status(500).send(result);
                 }
             });
         }

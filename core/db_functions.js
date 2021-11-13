@@ -13,16 +13,12 @@ module.exports = {
         });
     },
 
-    add: (db, sql, params) => {
+    run: (db, sql, params) => {
         return new Promise(resolve => {
             db.run(sql, params, (err) => {
                 if (err === null) {
-                    // res.status(200).send({
-                    //     message: "success",
-                    // });
                     resolve({ message: "success" });
                 } else {
-                    //res.status(500).send({ error: err.message });
                     resolve({ error: err.message });
                 }
             });
@@ -39,17 +35,17 @@ module.exports = {
         })
     },
 
-    checkExists: async (db, table, id) => {
+    checkExists: (db, table, id) => {
         return new Promise(resolve => {
             db.get(`SELECT COUNT(*) FROM ${table} WHERE id = ${id}`, (err, row) => {
                 if (err) {
                     resolve({ error: err.message });
                 } else if (row['COUNT(*)'] === 0) {
-                    resolve({ error: "does not exist" });
+                    resolve({ exists: false });
                 } else {
                     resolve({ message: "success" });
                 }
             });
         });
-    }
+    },
 };

@@ -23,9 +23,9 @@ module.exports = function (app, db) {
         const params = [body.name, body.expiry, body.inDate, body.count, body.category];
 
         if (result.error) {
-            res.status(500).send(result.error);
+            res.status(400).send(result.error);
         } else {
-            dbFuncs.add(db, sql, params).then(result => {
+            dbFuncs.run(db, sql, params).then(result => {
                 if (result.error) {
                     res.status(500).send(result);
                 } else {
@@ -46,7 +46,11 @@ module.exports = function (app, db) {
             res.status(400).send({ "error": result.error });
         } else {
             dbFuncs.checkExists(db, 'products', id).then(result => {
-                if (!result.error) {
+                if (result.error) {
+                    res.status(500).send(result);
+                } else if (result.exists === false) {
+                    res.status(400).send(result);
+                } else {
                     db.run(sql, params, (err) => {
                         dbFuncs.removeCheck(err).then(result => {
                             if (result.error) {
@@ -56,14 +60,11 @@ module.exports = function (app, db) {
                             }
                         });
                     });
-                } else {
-                    res.status(500).send(result);
                 }
             });
         }
     });
 
-    // TODO: finish implementing
     app.put('/v1/products/update/count', (req, res) => {
         const id = req.body.id;
         var result1 = coreSchemas.id.validate(id);
@@ -77,7 +78,21 @@ module.exports = function (app, db) {
         if (result1.error || result2.error) {
             res.status(400).send({ "error": result1.error || result2.error });
         } else {
-            res.status(200).send({});
+            dbFuncs.checkExists(db, 'products', id).then(result => {
+                if (result.error) {
+                    res.status(500).send(result);
+                } else if (result.exists === false) {
+                    res.status(400).send(result);
+                } else {
+                    dbFuncs.run(db, sql, params).then(result => {
+                        if (result.error) {
+                            res.status(500).send(result);
+                        } else {
+                            res.status(200).send(result);
+                        }
+                    });
+                }
+            });
         }
     });
 }
