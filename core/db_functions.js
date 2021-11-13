@@ -1,47 +1,53 @@
 'use strict'
 
 module.exports = {
-    getAll: (db, res, name) => {
-        db.all(`SELECT * FROM ${name};`, [], (err, rows) => {
-            if (err) {
-                res.status(500).send({ error: err.message });
-            } else {
-                res.status(200).send(rows);
-            }
+    getAll: (db, name) => {
+        return new Promise(resolve => {
+            db.all(`SELECT * FROM ${name};`, [], (err, rows) => {
+                if (err) {
+                    resolve({ error: err.message });
+                } else {
+                    resolve(rows);
+                }
+            });
         });
     },
 
-    add: (db, res, sql, params) => {
-        db.run(sql, params, (err) => {
+    add: (db, sql, params) => {
+        return new Promise(resolve => {
+            db.run(sql, params, (err) => {
+                if (err === null) {
+                    // res.status(200).send({
+                    //     message: "success",
+                    // });
+                    resolve({ message: "success" });
+                } else {
+                    //res.status(500).send({ error: err.message });
+                    resolve({ error: err.message });
+                }
+            });
+        });
+    },
+
+    removeCheck: (err) => {
+        return new Promise(resolve => {
             if (err === null) {
-                res.status(200).send({
-                    message: "success",
-                });
+                resolve({ message: "success" });
             } else {
-                res.status(500).send({ error: err.message });
+                resolve({ error: err.message });
             }
-        });
+        })
     },
 
-    removeCheck: (db, res, err) => {
-        if (err === null) {
-            res.status(200).send({ message: "success" });
-        } else {
-            res.status(500).send({ error: err.message });
-        }
-    },
-
-    checkExists: async (db, res, table, id) => {
+    checkExists: async (db, table, id) => {
         return new Promise(resolve => {
             db.get(`SELECT COUNT(*) FROM ${table} WHERE id = ${id}`, (err, row) => {
                 if (err) {
-                    res.status(500).send({ error: err.message });
-                    resolve(false);
+                    resolve({ error: err.message });
                 } else if (row['COUNT(*)'] === 0) {
-                    res.status(500).send({ error: "does not exist" });
-                    resolve(false);
+                    resolve({ error: "does not exist" });
                 } else {
-                    resolve(true);
+                    resolve({ message: "success" });
                 }
             });
         });

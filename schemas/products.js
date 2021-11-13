@@ -1,7 +1,7 @@
 'use strict'
 
 const Joi = require('joi');
-const coreSchema = require('./core');
+const coreSchemas = require('./core');
 
 module.exports = {
     new: Joi.object({
@@ -9,6 +9,8 @@ module.exports = {
         expiry: Joi.date().required(),
         inDate: Joi.date().required(),
         count: Joi.number().integer().min(1).required(),
-        category: coreSchema.id.required()
-    })
+        category: coreSchemas.id
+    }),
+
+    count: Joi.number().integer().required()
 }

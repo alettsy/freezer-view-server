@@ -6,7 +6,13 @@ const coreSchema = require('../schemas/core');
 
 module.exports = function (app, db) {
     app.get('/v1/categories/all', (_, res) => {
-        dbFuncs.getAll(db, res, 'categories');
+        dbFuncs.getAll(db, 'categories').then(result => {
+            if (result.error) {
+                res.status(500).send(result);
+            } else {
+                res.status(200).send(result);
+            }
+        });
     });
 
     app.put('/v1/categories/new', (req, res) => {
@@ -19,7 +25,13 @@ module.exports = function (app, db) {
         if (result.error) {
             res.status(500).send(result.error);
         } else {
-            dbFuncs.add(db, res, sql, params);
+            dbFuncs.add(db, sql, params).then(result => {
+                if (result.error) {
+                    res.status(500).send(result);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
         }
     });
 
@@ -31,13 +43,21 @@ module.exports = function (app, db) {
         const params = [id];
 
         if (result.error) {
-            res.status(200).send({ "error": result.error });
+            res.status(400).send({ "error": result.error });
         } else {
-            dbFuncs.checkExists(db, res, 'categories', id).then((exists) => {
-                if (exists) {
+            dbFuncs.checkExists(db, 'categories', id).then(result => {
+                if (!result.error) {
                     db.run(sql, params, (err) => {
-                        dbFuncs.removeCheck(db, res, err);
+                        dbFuncs.removeCheck(err).then(result => {
+                            if (result.error) {
+                                res.status(500).send(result);
+                            } else {
+                                res.status(200).send(result);
+                            }
+                        });
                     });
+                } else {
+                    res.status(500).send(result);
                 }
             });
         }
