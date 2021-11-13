@@ -7,9 +7,6 @@ const app = express();
 
 app.use(express.json());
 
-// TODO: add updateCount for products -> PUT /v1/products/update/count
-// TODO: add update for products -> PUT /v1/products/update
-
 app.get('/v1/test', (_, res) => {
     res.status(200).send({
         message: "success"
