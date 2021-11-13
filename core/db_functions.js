@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
     getAll: (db, res, name) => {
         db.all(`SELECT * FROM ${name};`, [], (err, rows) => {

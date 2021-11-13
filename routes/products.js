@@ -1,3 +1,5 @@
+'use strict'
+
 const dbFuncs = require('../core/db_functions');
 const schemas = require('../schemas/products.js')
 const coreSchema = require('../schemas/core');
