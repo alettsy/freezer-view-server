@@ -20,6 +20,7 @@ app.listen(3000, '0.0.0.0', () => {
     console.log("started server on http://localhost:3000/");
 
     db.serialize(() => {
+        db.get("PRAGMA foreign_keys = ON");
         console.log('Database Serialized');
     });
 });
