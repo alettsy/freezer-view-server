@@ -1,9 +1,9 @@
 'use strict'
 
 module.exports = {
-    getAll: (db, name) => {
+    getAll: (db, table) => {
         return new Promise(resolve => {
-            db.all(`SELECT * FROM ${name};`, [], (err, rows) => {
+            db.all(`SELECT * FROM ${table};`, [], (err, rows) => {
                 if (err) {
                     resolve({ error: err.message });
                 } else {
