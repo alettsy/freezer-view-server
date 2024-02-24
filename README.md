@@ -1,12 +1,11 @@
+> ⚠️ This project has been replaced by a much better quality application which you can find here: [alettsy/food-manager](https://github.com/alettsy/food-manager)
+
 # Freezer View Server
 
-## Set up
+## Getting started
 
-`npm install`
-
-## Running
-
-`node index.js`
+- Run `npm install` to install necessary packages
+- Run `node index.js` to run the application
 
 ## Create a system service
 
